@@ -9,8 +9,8 @@ import java.util.List;
 
 public class Processor {
 	
-	public static final String BIB_HOME = "C:\\Users\\Leandro\\workspace\\Parser\\Arquivos";
-	public static final String SHEET_FILE = BIB_HOME + "\\Artigos.xls";
+	public static final String BIB_HOME = "./Arquivos";
+	public static final String SHEET_FILE = BIB_HOME + "/Artigos.xls";
 
 	public static void main(String[] args) throws IOException {
 		File diretorio = new File(BIB_HOME);
