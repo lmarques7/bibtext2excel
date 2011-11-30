@@ -18,7 +18,7 @@ public class Processor {
 		ExcelSheetGenerator p = new ExcelSheetGenerator(SHEET_FILE);
 		
 		for (int i = 0; i < listaPastas.length; i++) {
-			if(!listaPastas[i].isDirectory()) { 
+			if(!listaPastas[i].isDirectory() || listaPastas[i].isHidden()) { 
 				// Se não é subpasta, continua com o laço
 				continue;
 			}
