@@ -11,6 +11,11 @@ public class Manuscript {
 	private String conference;
 	private String journal;
 	private String paperAbstract;
+	private String searchEngine;
+	
+	public Manuscript(String searchEngineSource) {
+		this.searchEngine = searchEngineSource;
+	}
 
 	public String getConference() {
 		return conference;
@@ -60,9 +65,18 @@ public class Manuscript {
 		this.paperAbstract = paperAbstract;
 	}
 
+	public String getSearchEngine() {
+		return searchEngine;
+	}
+
+	public void setSearchEngine(String searchEngine) {
+		this.searchEngine = searchEngine;
+	}
+
 	@Override
 	public String toString() {
-		return "Manuscript: " + this.title + "\n" + this.authors;  
+		return "Manuscript: " + this.title + "\n" + this.authors + "\n" +
+					 "Found at " + this.searchEngine;  
 	}
 	
 }

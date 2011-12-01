@@ -2,8 +2,9 @@ package bibtex.parser;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +17,7 @@ public class Processor {
 		File diretorio = new File(BIB_HOME);
 		File listaPastas[] = diretorio.listFiles();
 		ExcelSheetGenerator p = new ExcelSheetGenerator(SHEET_FILE);
+		ArrayList<Manuscript> listaArtigos = new ArrayList<Manuscript>();
 		
 		for (int i = 0; i < listaPastas.length; i++) {
 			if(!listaPastas[i].isDirectory() || listaPastas[i].isHidden()) { 
@@ -23,28 +25,36 @@ public class Processor {
 				continue;
 			}
 			File listaArquivos[] = listaPastas[i].listFiles(new BibFileFilter());
-			ArrayList<Manuscript> listaArtigos = new ArrayList<Manuscript>();
+			int contadorArtigos = listaArtigos.size();
 			// Pega todos os arquivos do diretório
 			for (File arquivo : listaArquivos) {
-				Manuscript artigo = processFile(arquivo, listaArtigos);
+				Manuscript artigo = processFile(arquivo, listaArtigos, listaPastas[i].getName());
 				if (artigo != null) {
 					// Adicionando o último artigo processado
 					listaArtigos.add(artigo);
 				}
 			}
-			int ultIndice = listaPastas[i].getCanonicalPath().lastIndexOf("\\");
-			String nomePasta = listaPastas[i].getCanonicalPath().substring(ultIndice + 1); 
-			System.out.println("Artigos processados de " + nomePasta + ": " +
-												 listaArtigos.size());
-			p.parse(listaArtigos, nomePasta);
+			contadorArtigos = listaArtigos.size() - contadorArtigos;
+			System.out.println("Artigos processados de " + listaPastas[i].getName() + 
+												": " + contadorArtigos);
 		}
+		p.parse(listaArtigos);
 	}
 
-	private static Manuscript processFile(File arquivo, ArrayList<Manuscript> listaArtigos) {
+	private static Manuscript processFile(File arquivo, ArrayList<Manuscript> listaArtigos, 
+			String nomePastaEngenhoBusca) {
 		String resultado;
 		Manuscript artigo = null;
 		try {
-			BufferedReader in = new BufferedReader(new FileReader(arquivo));
+			InputStreamReader reader = null;
+			String nomeArquivoSemExtensao = arquivo.getName().substring(0, arquivo.getName().lastIndexOf('.'));
+			if (nomeArquivoSemExtensao.endsWith("nonUTF")) {
+				System.out.println(arquivo.getName() + " processado com encoding padrão");
+				reader = new InputStreamReader(new FileInputStream(arquivo));
+			} else {
+				reader = new InputStreamReader(new FileInputStream(arquivo), "UTF8");
+			}
+			BufferedReader in = new BufferedReader(reader);
 			String linha;
 			while (in.ready()) {
 				linha = in.readLine().trim().toLowerCase();
@@ -55,7 +65,7 @@ public class Processor {
 					if (artigo !=  null) {
 						listaArtigos.add(artigo);
 					}
-					artigo = new Manuscript();
+					artigo = new Manuscript(nomePastaEngenhoBusca);
 				}
 				
 				if (artigo != null) {

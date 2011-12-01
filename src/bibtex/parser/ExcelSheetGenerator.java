@@ -13,7 +13,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 public class ExcelSheetGenerator {
 	
 	// Constantes
-	private static final int ID_INICIAL = 0; 
+	private static final int ID_INICIAL = 1; 
 	
 	private String arquivoPlanilha;
 	private int id = ID_INICIAL;
@@ -23,10 +23,11 @@ public class ExcelSheetGenerator {
 		this.arquivoPlanilha = localPlanilha;
 	}
 	
-	public void parse(List<Manuscript> listaArtigos, String searchEngineName) {
+	public void parse(List<Manuscript> listaArtigos) {
+		System.out.println("Total de artigos processados: " + listaArtigos.size());
 
-		Sheet manuscriptSheet = this.workbook.createSheet(searchEngineName);
-		Sheet authorSheet = this.workbook.createSheet(searchEngineName + " - authors");
+		Sheet manuscriptSheet = this.workbook.createSheet("Papers");
+		Sheet authorSheet = this.workbook.createSheet("Authors");
 
 		int linhaArtigos = 0, linhaAutores = 0;
 
@@ -57,6 +58,9 @@ public class ExcelSheetGenerator {
 			
 			cell = manuscriptRow.createCell(5); // Abstract
 			cell.setCellValue(listaArtigos.get(i).getAbstract());
+			
+			cell = manuscriptRow.createCell(6); // Source (search engine)
+			cell.setCellValue(listaArtigos.get(i).getSearchEngine());
 
 			autores = listaArtigos.get(i).getAuthors();
 			if (autores != null && autores.size() > 0) {
@@ -89,6 +93,8 @@ public class ExcelSheetGenerator {
 		cell.setCellValue(BibTag.JOURNAL.getTag());
 		cell = linhaCabecalho.createCell(5);
 		cell.setCellValue(BibTag.ABSTRACT.getTag());
+		cell = linhaCabecalho.createCell(6);
+		cell.setCellValue("source");
 	}
 	
 	private void createAuthorsHeader(Sheet sheet, int linhaAutores) {
