@@ -2,7 +2,6 @@ package bibtex.parser.tags;
 
 import java.io.FileInputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -14,10 +13,12 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import bibtex.parser.Processor;
+
 public class TagAnalizer {
 
 	private static final int NUMBER_OF_PAPERS = 2595;
-	private static final String FILE_PATH = "C:/Users/Leandro/workspace/BibText2Excel_parser/Arquivos/Artigos_formatados.xlsx";
+	private static final String FILE_PATH = Processor.BIB_HOME + "/Artigos_formatados.xlsx";
 	private static final byte REF_ID_INDEX = 0;
 	private static final byte SELECTED_INDEX = 7;
 	private static final byte TAGS_INDEX = 8;
