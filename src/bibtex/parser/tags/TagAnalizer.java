@@ -17,7 +17,7 @@ import bibtex.parser.Processor;
 
 public class TagAnalizer {
 
-	private static final int NUMBER_OF_PAPERS = 2595;
+	private static final int NUMBER_OF_PAPERS = 2688;
 	private static final String FILE_PATH = Processor.BIB_HOME + "/Artigos_formatados.xlsx";
 	private static final byte REF_ID_INDEX = 0;
 	private static final byte SELECTED_INDEX = 7;
