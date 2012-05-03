@@ -23,7 +23,6 @@ public class TagAnalizer {
 	private static final byte SELECTED_INDEX = 7;
 	private static final byte TAGS_INDEX = 8;
 
-	private Map<String, Integer> tagMap;
 	private Map<String, ArrayList<Integer>> tagMapRefs;
 	private Workbook workbook;
 	private int numberOfIncluded;
@@ -32,12 +31,11 @@ public class TagAnalizer {
 	private int numberOfIncludedNotClassifiedYet;
 
 	public TagAnalizer() throws Exception {
-		this.tagMap = new HashMap<String, Integer>();
 		this.tagMapRefs = new HashMap<String, ArrayList<Integer>>();
 		this.workbook = new XSSFWorkbook(new FileInputStream(FILE_PATH));
 	}
 
-	public void processTags() {
+	public void processAllTags() {
 		Sheet papersSheet = this.workbook.getSheet("Papers");
 		for (int i = 1; i <= NUMBER_OF_PAPERS; i++) {
 			Row row = papersSheet.getRow(i);
@@ -53,21 +51,14 @@ public class TagAnalizer {
 						String[] splittedTags = tags.split(",");
 						for (int j = 0; j < splittedTags.length; j++) {
 							int refID = (int) row.getCell(REF_ID_INDEX).getNumericCellValue();
-							if (this.tagMap.containsKey(splittedTags[j].trim().toLowerCase())) {
-								Integer number = this.tagMap.get(splittedTags[j].trim().toLowerCase());
-								number++;
-								this.tagMap.put(splittedTags[j].trim().toLowerCase(), number);
-								
-								ArrayList<Integer> list = this.tagMapRefs.get(splittedTags[j].trim().toLowerCase());
-								list.add(refID);
-								this.tagMapRefs.put(splittedTags[j].trim().toLowerCase(), list);
+							ArrayList<Integer> list;
+							if (this.tagMapRefs.containsKey(splittedTags[j].trim().toLowerCase())) {
+								list = this.tagMapRefs.get(splittedTags[j].trim().toLowerCase());
 							} else {
-								this.tagMap.put(splittedTags[j].trim().toLowerCase(), 1);
-
-								ArrayList<Integer> list = new ArrayList<Integer>();
-								list.add(refID);
-								this.tagMapRefs.put(splittedTags[j].trim().toLowerCase(), list);
+								list = new ArrayList<Integer>();
 							}
+							list.add(refID);
+							this.tagMapRefs.put(splittedTags[j].trim().toLowerCase(), list);
 						}
 					} else {
 						this.numberOfIncludedNotClassifiedYet++;
@@ -87,14 +78,14 @@ public class TagAnalizer {
 		System.out.println("Papers included and classified: " + this.numberOfIncludedAndClassified);
 		System.out.println("Papers included and NOT classified: " + this.numberOfIncludedNotClassifiedYet);
 		
-		Set<String> keys = this.tagMap.keySet();
+		Set<String> keys = this.tagMapRefs.keySet();
 		System.out.println("Number of unique tags: " + keys.size());
 		
 		ArrayList<String> keysArray = new ArrayList<String> (keys);
 		Collections.sort(keysArray);
 		for (Iterator<String> iterator = keysArray.iterator(); iterator.hasNext();) {
 			String key = iterator.next();
-			System.out.printf("%35s %3d   ", key, this.tagMap.get(key));
+			System.out.printf("%35s %3d   ", key, this.tagMapRefs.get(key).size());
 			ArrayList<Integer> list = this.tagMapRefs.get(key);
 			System.out.println(list);
 		}
@@ -102,7 +93,7 @@ public class TagAnalizer {
 	
 	public static void main(String[] args) throws Exception {
 		TagAnalizer ta = new TagAnalizer();
-		ta.processTags();
+		ta.processAllTags();
 		ta.printTagsStatus();
 	}
 
