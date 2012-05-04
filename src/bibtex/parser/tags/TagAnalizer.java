@@ -191,8 +191,8 @@ public class TagAnalizer {
 	
 	public static void main(String[] args) throws Exception {
 		TagAnalizer ta = new TagAnalizer();
-		//ta.processAllTags();
-		ta.processTagsAndDomainsStatus();
+		ta.processAllTags();
+		//ta.processTagsAndDomainsStatus();
 	}
 
 }
