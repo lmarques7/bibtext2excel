@@ -8,6 +8,7 @@ public class DSLTypeAndDomain implements Comparable<DSLTypeAndDomain>{
 	private int refID;
 	private String type;
 	private List<String> domains;
+	private List<String> researchTypes;
 	
 	public DSLTypeAndDomain(int refID, String type, List<String> domains) {
 		this(refID, type);
@@ -18,6 +19,7 @@ public class DSLTypeAndDomain implements Comparable<DSLTypeAndDomain>{
 		this.refID = refID;
 		this.type = type;
 		this.domains = new ArrayList<String>();
+		this.researchTypes = new ArrayList<String>();
 	}
 
 	public String getType() {
@@ -40,6 +42,18 @@ public class DSLTypeAndDomain implements Comparable<DSLTypeAndDomain>{
 		this.domains.add(newDomain);
 	}
 	
+	public List<String> getResearchTypes() {
+		return researchTypes;
+	}
+
+	public void setResearchTypes(List<String> researchTypes) {
+		this.researchTypes = researchTypes;
+	}
+	
+	public void addResearchType(String researchType) {
+		this.researchTypes.add(researchType);		
+	}
+
 	public int getRefID() {
 		return refID;
 	}

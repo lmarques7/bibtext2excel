@@ -1,7 +1,6 @@
 package bibtex.parser.tags;
 
 import java.io.FileInputStream;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -19,12 +18,13 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import bibtex.parser.Processor;
 
 public class TagAnalizer {
-
+	
 	private static final int NUMBER_OF_PAPERS = 2688;
 	private static final String FILE_PATH = Processor.BIB_HOME + "/Artigos_formatados.xlsx";
 	private static final byte REF_ID_INDEX = 0;
 	private static final byte SELECTED_INDEX = 7;
 	private static final byte TAGS_INDEX = 8;
+	private static final byte RESEARCH_TYPE_INDEX = 9;
 
 	private Map<String, ArrayList<Integer>> tagMapRefs;
 	private Map<String, ArrayList<Integer>> excludedTagsRefs;
@@ -78,6 +78,7 @@ public class TagAnalizer {
 				if (selected.equalsIgnoreCase("included")) {
 					this.numberOfIncluded++;
 					String tagsCellContent = row.getCell(TAGS_INDEX).getStringCellValue();
+					String researchCellContent = row.getCell(RESEARCH_TYPE_INDEX).getStringCellValue();
 					int refID = (int) row.getCell(REF_ID_INDEX).getNumericCellValue();
 					if (tagsCellContent != null && !tagsCellContent.trim().equals("")) {
 						this.numberOfIncludedAndClassified++;
@@ -102,7 +103,7 @@ public class TagAnalizer {
 							if (foundFacet) {
 								subDomains = new ArrayList<String>();
 							} else {
-								subDomains.add(currentTag);
+								subDomains.add(currentTag.trim());
 							}
 						}
 						
@@ -112,6 +113,13 @@ public class TagAnalizer {
 						
 						currentDsl.setDomains(subDomains);
 						currentDsl = this.checkEmbeddedDSLAndAjust(currentDsl);
+						
+						//Processing research types
+						String[] rTypes = researchCellContent.split(",");
+						for (int j = 0; j < rTypes.length; j++) {
+							currentDsl.addResearchType(rTypes[j].toLowerCase().trim());
+						}
+						
 						Collections.sort(currentDsl.getDomains());
 						this.dslTypes.add(currentDsl);
 						
@@ -180,6 +188,45 @@ public class TagAnalizer {
 			System.out.println(list);
 		}
 	}
+	
+	public void processUniqueDomains() {
+		Map<String, Integer> domainBag = new HashMap<String, Integer>();
+		for (DSLTypeAndDomain paper : this.dslTypes) {
+			
+			if (paper.getType().equals(FacetTag.EMBEDDED_DSL.getText()) ||
+				paper.getType().equals(FacetTag.EXTERNAL_DSL.getText()) ||
+				paper.getType().equals(FacetTag.DSAL.getText())||
+				paper.getType().equals(FacetTag.DSML.getText()) ||
+				paper.getType().equals(FacetTag.ADL.getText()) ) {
+				List<String> currentDomains = paper.getDomains();
+
+				for (String tag : currentDomains) {
+					if (domainBag.containsKey(tag)) {
+						int temp = domainBag.get(tag);
+						temp++;
+						domainBag.put(tag, temp);
+					} else {
+						domainBag.put(tag, 1);
+					}
+				}
+			}
+		}
+		
+		System.out.println("====================================");
+	
+		Set<String> keys = domainBag.keySet();
+		System.out.println("Number of unique domains: " + keys.size());
+		
+		ArrayList<String> keysArray = new ArrayList<String> (keys);
+		Collections.sort(keysArray);
+		for (Iterator<String> iterator = keysArray.iterator(); iterator.hasNext();) {
+			String key = iterator.next();
+			
+			if (domainBag.get(key) > 10) {
+				System.out.printf("%35s ; %3d\n", key, domainBag.get(key));
+			}
+		}
+	}
 
 	public void printGeneralTagsStatus() {
 		System.out.println("Total papers classified: " + 
@@ -189,10 +236,63 @@ public class TagAnalizer {
 		System.out.println("Papers included and NOT classified: " + this.numberOfIncludedNotClassifiedYet);
 	}
 	
+	public void printDomainsVSTypes() {
+		ArrayList<String> types = new ArrayList<String>();
+		
+		types.add(FacetTag.EMBEDDED_DSL.getText());
+		types.add(FacetTag.EXTERNAL_DSL.getText());
+		types.add(FacetTag.DSML.getText());
+		types.add(FacetTag.TECHNIQUE.getText());
+		types.add(FacetTag.PROCESS.getText());
+		types.add(FacetTag.METHOD.getText());
+		types.add(FacetTag.TOOLS.getText());
+		
+		Map<String, Integer> result = new HashMap<String, Integer>();
+		
+		for (Iterator<String> iterator = types.iterator(); iterator.hasNext();) {
+			String currentType = iterator.next();
+			for (Iterator<DSLTypeAndDomain> iterator2 = this.dslTypes.iterator(); iterator2.hasNext();) {
+				DSLTypeAndDomain currentPaper = iterator2.next();
+				if (currentType.equalsIgnoreCase(currentPaper.getType())) {
+					List<String> currentDomains = currentPaper.getDomains();
+					for (String currentDomain : currentDomains) {
+						currentDomain = currentDomain.trim().toLowerCase();
+						for (int i = 0; i < Top10Domains.DOMAINS.length; i++) {
+							for (int j = 0; j < Top10Domains.DOMAINS[i].length; j++) {
+								if (currentDomain.equalsIgnoreCase(Top10Domains.DOMAINS[i][j])) {
+									String key = currentType + "," + Top10Domains.DOMAINS[i][0];
+									if (result.containsKey(key)) {
+										int number = result.get(key);
+										number++;
+										result.put(key, number);
+									} else {
+										result.put(key, 1);
+									}
+									
+								}
+							}
+						}	
+					}
+				}
+			}
+		}
+		
+		Set<String> keys = result.keySet();
+		for (Iterator<String> iterator = keys.iterator(); iterator.hasNext();) {
+			String key = iterator.next();
+			System.out.println(key + ";" + result.get(key));
+		}
+	}
+	
 	public static void main(String[] args) throws Exception {
 		TagAnalizer ta = new TagAnalizer();
-		ta.processAllTags();
-		//ta.processTagsAndDomainsStatus();
+//		ta.processAllTags();
+//		ta.processUniqueDomains();
+		ta.processTagsAndDomainsStatus();
+//		ta.printDomainsVSTypes();
+		
+
+		
 	}
 
 }
