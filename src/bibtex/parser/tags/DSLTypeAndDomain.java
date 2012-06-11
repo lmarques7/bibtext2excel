@@ -6,30 +6,42 @@ import java.util.List;
 public class DSLTypeAndDomain implements Comparable<DSLTypeAndDomain>{
 	
 	private int refID;
-	private String type;
+	private List<String> dslTypes;
 	private List<String> domains;
 	private List<String> researchTypes;
 	
-	public DSLTypeAndDomain(int refID, String type, List<String> domains) {
-		this(refID, type);
+	public DSLTypeAndDomain(int refID, List<String> types, List<String> domains) {
+		this(refID, types);
 		this.domains = domains;
 	}
 	
-	public DSLTypeAndDomain(int refID, String type) {
+	public DSLTypeAndDomain(int refID, List<String> types) {
 		this.refID = refID;
-		this.type = type;
+		this.dslTypes = types;
 		this.domains = new ArrayList<String>();
 		this.researchTypes = new ArrayList<String>();
 	}
 
-	public String getType() {
-		return type;
+	public DSLTypeAndDomain(int refID, String firstType) {
+		this.refID = refID;
+		this.dslTypes = new ArrayList<String>();
+		this.dslTypes.add(firstType);
+		this.domains = new ArrayList<String>();
+		this.researchTypes = new ArrayList<String>();
+	}
+	
+	public List<String> getDslTypes() {
+		return dslTypes;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public void setDslTypes(List<String> dslTypes) {
+		this.dslTypes = dslTypes;
 	}
 
+	public void addDSLType(String newType) {
+		this.dslTypes.add(newType);
+	}
+	
 	public List<String> getDomains() {
 		return domains;
 	}
@@ -38,7 +50,7 @@ public class DSLTypeAndDomain implements Comparable<DSLTypeAndDomain>{
 		this.domains = domains;
 	}
 
-	public void addDomains(String newDomain) {
+	public void addDomain(String newDomain) {
 		this.domains.add(newDomain);
 	}
 	
@@ -65,16 +77,16 @@ public class DSLTypeAndDomain implements Comparable<DSLTypeAndDomain>{
 	@Override
 	public String toString() {
 		String formattedDomains = this.domains.toString();
-		return String.format("%6d [%15s]-%s", this.refID, this.type, formattedDomains);
+		return String.format("%6d %15s-%s", this.refID, this.dslTypes, formattedDomains);
 	}
 
 	@Override
 	public int compareTo(DSLTypeAndDomain next) {
 		int result;
-		if (this.type.equals(next.getType())) {
+		if (this.dslTypes.equals(next.getDslTypes())) {
 			result = this.compareTwoLists(this.domains, next.domains);
 		} else {
-			result = this.type.compareTo(next.getType());
+			result = this.compareTwoLists(this.dslTypes, next.getDslTypes());
 		}
 		return result;
 	}

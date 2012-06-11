@@ -6,8 +6,8 @@ public class EmbeddedDSL extends DSLTypeAndDomain {
 
 	private String technology;
 	
-	public EmbeddedDSL(int refID, String type, String technology, List<String> domains) {
-		super(refID, type, domains);
+	public EmbeddedDSL(int refID, List<String> dslType, String technology, List<String> domains) {
+		super(refID, dslType, domains);
 		this.technology = technology;
 	}
 
@@ -22,14 +22,14 @@ public class EmbeddedDSL extends DSLTypeAndDomain {
 	@Override
 	public String toString() {
 		String formattedDomains = this.getDomains().toString();
-		return String.format("%6d [%15s][TECHNOLOGY: %15s]-%s", 
-				this.getRefID(), this.getType(), this.technology, formattedDomains);
+		return String.format("%6d %15s[TECHNOLOGY: %15s]-%s", 
+				this.getRefID(), this.getDslTypes(), this.technology, formattedDomains);
 	}
 	
 	@Override
 	public int compareTo(DSLTypeAndDomain next) {
 		int result;
-		if (this.getType().equals(next.getType())) {
+		if (this.getDslTypes().equals(next.getDslTypes())) {
 			EmbeddedDSL tempNext = (EmbeddedDSL) next;
 			if (this.technology.equalsIgnoreCase(tempNext.getTechnology())) {
 				result = this.compareTwoLists(this.getDomains(), next.getDomains());	
@@ -38,7 +38,7 @@ public class EmbeddedDSL extends DSLTypeAndDomain {
 			}
 			
 		} else {
-			result = this.getType().compareTo(next.getType());
+			result = this.compareTwoLists(this.getDslTypes(), next.getDslTypes());
 		}
 		return result;
 	}
