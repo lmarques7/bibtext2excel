@@ -75,7 +75,30 @@ public class TagAnalizer {
 		Set<String> keySet = rMap.keySet();
 		for (Iterator<String> iterator = keySet.iterator(); iterator.hasNext();) {
 			String currentKey = iterator.next();
-			System.out.printf("%25s %5d \n", currentKey, rMap.get(currentKey));	
+			System.out.printf("%s;%d\n", currentKey, rMap.get(currentKey));	
+		}
+	}
+	
+	public void countAndPrintDSLResearchTypes() {
+		this.processTagsAndDomainsStatus(false);
+		
+		Map<String, Integer> dslResearchMap = new HashMap<String, Integer>();
+		for (DSLTypeAndDomain dsl : this.dslTypes) {
+			for(String type : dsl.getDslTypes()) {
+				if (dslResearchMap.containsKey(type)) {
+					int number = dslResearchMap.get(type);
+					number++;
+					dslResearchMap.put(type, number);
+				} else {
+					dslResearchMap.put(type, 0);
+				}
+			}
+		}
+		
+		Set<String> keySet = dslResearchMap.keySet();
+		for (Iterator<String> iterator = keySet.iterator(); iterator.hasNext();) {
+			String currentKey = iterator.next();
+			System.out.printf("%s;%d\n", currentKey, dslResearchMap.get(currentKey));	
 		}
 	}
 	
@@ -415,8 +438,9 @@ public class TagAnalizer {
 	
 	public static void main(String[] args) throws Exception {
 		TagAnalizer ta = new TagAnalizer();
-//		ta.printResearchTypeTags(true);
-//		ta.processAllTags(true);
+//		ta.printResearchTypeTags();
+//		ta.countAndPrintDSLResearchTypes();
+		ta.processAllTags(true);
 //		ta.processTagsAndDomainsStatus(true);
 //		ta.printAllUniqueDomainsAndOccurrences();
 //		ta.printDomainsCrossDSLResearchTypesForBubbleChart();
