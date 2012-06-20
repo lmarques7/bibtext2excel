@@ -438,9 +438,9 @@ public class TagAnalizer {
 	
 	public static void main(String[] args) throws Exception {
 		TagAnalizer ta = new TagAnalizer();
-//		ta.printResearchTypeTags();
+		ta.printResearchTypeTags();
 //		ta.countAndPrintDSLResearchTypes();
-		ta.processAllTags(true);
+//		ta.processAllTags(true);
 //		ta.processTagsAndDomainsStatus(true);
 //		ta.printAllUniqueDomainsAndOccurrences();
 //		ta.printDomainsCrossDSLResearchTypesForBubbleChart();
