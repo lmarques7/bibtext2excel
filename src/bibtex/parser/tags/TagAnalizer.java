@@ -289,7 +289,7 @@ public class TagAnalizer {
 	 * 
 	 * @param refBag The references mapping (tagKey, List of references) 
 	 */
-	public void printTagsStatus(Map<String, ArrayList<Integer>> refBag) {
+	private void printTagsStatus(Map<String, ArrayList<Integer>> refBag) {
 		this.printGeneralTagsStatus();
 		
 		Set<String> keys = refBag.keySet();
@@ -383,7 +383,7 @@ public class TagAnalizer {
 	/**
 	 * Prints general tag status
 	 */
-	public void printGeneralTagsStatus() {
+	private void printGeneralTagsStatus() {
 		System.out.println("Total papers classified: " + 
 				(this.numberOfExcluded + this.numberOfIncluded));
 		System.out.println("Papers included: " + this.numberOfIncluded);
@@ -438,9 +438,9 @@ public class TagAnalizer {
 	
 	public static void main(String[] args) throws Exception {
 		TagAnalizer ta = new TagAnalizer();
-		ta.printResearchTypeTags();
+//		ta.printResearchTypeTags();
 //		ta.countAndPrintDSLResearchTypes();
-//		ta.processAllTags(true);
+		ta.processAllTags(true);
 //		ta.processTagsAndDomainsStatus(true);
 //		ta.printAllUniqueDomainsAndOccurrences();
 //		ta.printDomainsCrossDSLResearchTypesForBubbleChart();
