@@ -4,7 +4,7 @@ public interface DomainAggregatedTags {
 	
 	public static final String[] WEB = {
 		"web", "web services", "semantic web", "adaptive web systems", "web apis",  
-		"services mashup", "rest", "SLA", "service level agreement", "semantic web",                        
+		"services mashup", "rest", "SLA", "service level agreement",                        
 		"service oriented systems", "soa", "internet telephony",
 		"service orchestration", "services orchestration", "ws-bpel", "services composition"
 	};
